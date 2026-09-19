@@ -1,6 +1,6 @@
-﻿{
+{
     "_meta":  {
-                  "source":  "已知校园活动汇总.docx",
+                  "source":  "已知校园活动汇总.md",
                   "source_section":  "四、校园活动与机会信息",
                   "entry_count":  26,
                   "purpose":  "白名单活动库的种子数据。发布活动时必须挂靠其中一条（Activity.whitelist_entry_id 非空外键）。",
