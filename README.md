@@ -35,7 +35,7 @@
 │   ├── 已知校园活动汇总.docx        # 活动数据源（26 条，编号 01–26）
 │   ├── 产品设计方案.md             # 产品设计方案 v2.0
 │   ├── activities.seed.json       # 26 条结构化种子数据（含字段枚举定义）
-│   └── README参考.md              # 本 README 的结构参考
+│   └── README参考.md              # 本地参考文件，未纳入版本控制
 ├── AGENTS.md                      # 协作约定
 ├── .gitattributes                 # 换行符规范（仓库内统一 LF）
 ├── .gitignore

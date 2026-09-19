@@ -97,3 +97,6 @@ $RECYCLE.BIN/
 # ---------- 上传的用户文件（活动附件等，不进版本库） ----------
 uploads/
 public/uploads/
+
+# ---------- 本地参考文件（第三方 README 副本，含其商标与链接，不入库） ----------
+design/README参考.md
