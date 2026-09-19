@@ -1,0 +1,99 @@
+# ---------- 依赖 / 构建产物 ----------
+node_modules/
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+.turbo/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.eggs/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Java / Gradle / Maven
+target/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
+
+# Go / Rust
+bin/
+pkg/
+target/
+
+# ---------- 环境变量 / 密钥 ----------
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+*.p12
+secrets.json
+
+# ---------- 日志 / 运行时数据 ----------
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+tmp/
+temp/
+
+# ---------- 编辑器 / IDE ----------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# ---------- 操作系统 ----------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Office / 设计临时文件 ----------
+~$*.doc
+~$*.docx
+~$*.ppt
+~$*.pptx
+~$*.xls
+~$*.xlsx
+*.tmp
+
+# ---------- 上传的用户文件（活动附件等，不进版本库） ----------
+uploads/
+public/uploads/
