@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>校园活动与机会平台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="inner">
+    <a class="site-title" href="/">校园活动与机会平台</a>
+    <span class="site-sub">26 条校园活动 · 一眼看清门槛、地点、时间与报名方式</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="filters" id="filters">
+    <button class="chip" data-filter="all" aria-pressed="true">全部</button>
+    <button class="chip" data-filter="零基础" aria-pressed="false">零基础可参加</button>
+    <button class="chip" data-filter="无需报名" aria-pressed="false">无需报名</button>
+    <button class="chip" data-filter="长期" aria-pressed="false">长期招募</button>
+    <button class="chip" data-filter="closed" aria-pressed="false">含已结束</button>
+    <input class="search" id="q" type="search" placeholder="搜索活动名称、地点、门槛…" autocomplete="off">
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="cards" id="cards"></div>
+  <div class="empty" id="empty" hidden>没有匹配的活动</div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var state = { filter: 'all', q: '' };
+  var cardsEl = document.getElementById('cards');
+  var emptyEl = document.getElementById('empty');
+  var countEl = document.getElementById('count');
+
+  function query() {
+    var p = [];
+    if (state.q) p.push('q=' + encodeURIComponent(state.q));
+    if (state.filter === '零基础' || state.filter === '长期') p.push('threshold=' + encodeURIComponent(state.filter));
+    if (state.filter === '无需报名') p.push('status=' + encodeURIComponent('无需报名'));
+    if (state.filter === 'closed') p.push('includeClosed=1');
+    return '/api/activities' + (p.length ? '?' + p.join('&') : '');
+  }
+
+  function cardHtml(it) {
+    var f = it.fields || {};
+    var badges = App.badge(it.status);
+    if (it.riskLevel === 'high') badges += '<span class="badge risk">信息存疑</span>';
+    else if (it.riskLevel === 'medium') badges += '<span class="badge pending">疑似推广</span>';
+
+    var rows = [
+      ['时间', App.val(f.schedule)],
+      ['地点', App.val(f.location)],
+      ['门槛', App.combine([f.audience, f.threshold])],
+      ['截止', App.val(f.deadline)],
+      ['报名', App.val(f.signup_mode)]
+    ].map(function (r) {
+      return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>';
+    }).join('');
+
+    var note = it.hasUpdates ? '<div class="card-note">时间或地点已有变更，见详情</div>' : '';
+
+    return '<article class="card" data-id="' + App.esc(it.id) + '">' +
+      '<div class="card-head">' +
+        '<div class="card-title"><span class="card-id">' + App.esc(it.id) + '</span>' + App.esc(it.name) + '</div>' +
+        '<div class="badges">' + badges + '</div>' +
+      '</div>' +
+      '<dl class="card-fields">' + rows + '</dl>' +
+      note +
+      '<div class="card-foot">' +
+        '<button class="owner-link" data-owner="' + App.esc(it.id) + '">我是组织者 · 补充信息</button>' +
+      '</div>' +
+    '</article>';
+  }
+
+  async function load() {
+    cardsEl.innerHTML = '<div class="empty">加载中…</div>';
+    try {
+      var data = await App.api(query());
+      countEl.textContent = data.total + ' 条 · ' + (data.term || '');
+      if (!data.items.length) { cardsEl.innerHTML = ''; emptyEl.hidden = false; return; }
+      emptyEl.hidden = true;
+      cardsEl.innerHTML = data.items.map(cardHtml).join('');
+    } catch (e) {
+      cardsEl.innerHTML = '<div class="empty">加载失败：' + App.esc(e.message) + '</div>';
+    }
+  }
+
+  document.getElementById('filters').addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.chip');
+    if (!btn) return;
+    state.filter = btn.dataset.filter;
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c === btn));
+    });
+    load();
+  });
+
+  var timer = null;
+  document.getElementById('q').addEventListener('input', function (ev) {
+    state.q = ev.target.value.trim();
+    clearTimeout(timer);
+    timer = setTimeout(load, 200);
+  });
+
+  cardsEl.addEventListener('click', function (ev) {
+    var owner = ev.target.closest('[data-owner]');
+    if (owner) {
+      ev.stopPropagation();
+      // 口令不出现在列表里；这里只带活动编号，由编辑页要求输入口令
+      location.href = '/edit.html?id=' + encodeURIComponent(owner.dataset.owner);
+      return;
+    }
+    var card = ev.target.closest('.card');
+    if (card) location.href = '/activity.html?id=' + encodeURIComponent(card.dataset.id);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

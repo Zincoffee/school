@@ -98,5 +98,10 @@ $RECYCLE.BIN/
 uploads/
 public/uploads/
 
+# ---------- 运行时数据（由 design/activities.seed.json 首次启动生成） ----------
+# 包含补充口令、组织者补充内容、变更记录与上传附件，均为本机运行产物，不入库。
+# 需要重新初始化时删除该目录或执行 node server.js --reset。
+data/
+
 # ---------- 本地参考文件（第三方 README 副本，含其商标与链接，不入库） ----------
 design/README参考.md

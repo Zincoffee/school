@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>活动详情 · 校园活动与机会平台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="inner">
+    <a class="site-title" href="/">校园活动与机会平台</a>
+    <span class="site-sub"><a href="/">← 返回全部活动</a></span>
+  </div>
+</header>
+
+<div class="wrap" id="app">
+  <div class="empty">加载中…</div>
+</div>
+
+<script src="/ooxml.js"></script>
+<script src="/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var root = document.getElementById('app');
+  var id = new URLSearchParams(location.search).get('id') || '';
+
+  function riskMsg(level) {
+    if (level === 'high') {
+      return '<div class="msg err"><b>信息存疑：</b>该条目缺少主办方与地点等关键信息，并存在站外引流或夸大承诺的特征。请谨慎对待，不要向对方转账或提供个人敏感信息。</div>';
+    }
+    if (level === 'medium') {
+      return '<div class="msg warn"><b>疑似商业推广：</b>该条目标题与实际内容可能不一致，请自行判断。</div>';
+    }
+    return '';
+  }
+
+  function fileRow(f, idx) {
+    var canPreview = App.kindOf(f) !== 'other';
+    return '<li data-idx="' + idx + '">' +
+      '<span class="fname">' + App.esc(f.name) + '</span>' +
+      '<span class="fsize">' + App.fmtSize(f.size) + '</span>' +
+      (canPreview ? '<button class="btn secondary" data-preview="1">在线预览</button>' : '') +
+      '<a class="btn ghost" href="' + App.esc(f.url) + '" download>下载</a>' +
+      '</li>';
+  }
+
+  function historyRow(h) {
+    var from = h.oldValue == null || h.oldValue === '' ? '（空）' : h.oldValue;
+    var label = h.fieldLabel || h.field;
+    var reason = h.reason ? '　<span class="when">' + App.esc(h.reason) + '</span>' : '';
+    return '<li>' +
+      '<span class="when">' + App.esc(App.fmtWhen(h.changedAt)) + '</span>' +
+      '<b>' + App.esc(label) + '</b>：' +
+      '<span class="from">' + App.esc(from) + '</span> → ' +
+      '<span class="to">' + App.esc(h.newValue == null ? '（清空）' : h.newValue) + '</span>' +
+      reason +
+      '</li>';
+  }
+
+  async function load() {
+    if (!id) { root.innerHTML = '<div class="empty">缺少活动编号</div>'; return; }
+    var d;
+    try { d = await App.api('/api/activities/' + encodeURIComponent(id)); }
+    catch (e) { root.innerHTML = '<div class="empty">' + App.esc(e.message) + '</div>'; return; }
+
+    var a = d.activity, f = a.fields || {};
+    document.title = a.name + ' · 校园活动与机会平台';
+
+    var badges = App.badge(a.status);
+    if (a.riskLevel === 'high') badges += '<span class="badge risk">信息存疑</span>';
+    else if (a.riskLevel === 'medium') badges += '<span class="badge pending">疑似推广</span>';
+
+    var merged = (d.mergedFrom || []).length
+      ? '<div class="detail-meta">已合并补充通知：' + d.mergedFrom.map(App.esc).join('、') + '</div>' : '';
+
+    var filesHtml = d.files.length
+      ? '<ul class="files">' + d.files.map(fileRow).join('') + '</ul>'
+      : '<div class="preview-note">该活动暂未上传资料。若你是组织者，可通过页面右下角入口补充。</div>';
+    var historyHtml = d.history.length
+      ? '<ul class="history">' + d.history.map(historyRow).join('') + '</ul>'
+      : '<div class="preview-note">暂无变更记录。</div>';
+
+    var notes = a.notes ? '<div class="preview-note">备注：' + App.esc(a.notes) + '</div>' : '';
+
+    root.innerHTML =
+      '<h1 class="detail-title">' + App.esc(a.name) + '</h1>' +
+      '<div class="badges" style="justify-content:flex-start">' + badges + '</div>' +
+      '<div class="detail-meta">编号 ' + App.esc(a.id) + ' · ' + App.esc(a.category || '未分类') +
+        ' · 发布方：' + App.esc(a.publisherType || App.UNKNOWN) + '</div>' +
+      merged +
+      riskMsg(a.riskLevel) +
+
+      '<div class="panel"><h2>要求与地点</h2>' +
+        '<dl class="fields">' + App.renderFields(f) + '</dl>' + notes +
+      '</div>' +
+
+      '<div class="panel"><h2>📎 活动资料（' + d.files.length + '）</h2>' + filesHtml +
+        '<div id="preview"></div>' +
+      '</div>' +
+
+      '<div class="panel"><h2>🕘 更新记录</h2>' + historyHtml + '</div>' +
+
+      '<div class="panel"><div class="card-foot" style="border:0;margin:0">' +
+        '<button class="owner-link" id="owner">我是组织者 · 补充信息</button>' +
+      '</div></div>';
+
+    document.getElementById('owner').addEventListener('click', function () {
+      location.href = '/edit.html?id=' + encodeURIComponent(a.id);
+    });
+
+    var previewBox = document.getElementById('preview');
+    root.querySelectorAll('[data-preview]').forEach(function (btn) {
+      btn.addEventListener('click', async function () {
+        var idx = Number(btn.closest('li').dataset.idx);
+        var file = d.files[idx];
+        if (!file) return;
+        previewBox.innerHTML = '<div class="preview-box" id="pbox"></div>';
+        var box = document.getElementById('pbox');
+        var msg = await App.previewFile(file, box);
+        if (msg) box.insertAdjacentHTML('beforeend', '<div class="preview-note">' + App.esc(msg) + '</div>');
+        previewBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

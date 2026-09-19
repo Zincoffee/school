@@ -1,14 +1,14 @@
 <h1 align="center">校园活动与机会平台</h1>
 
 <p align="center">
-  <b>让新生在三分钟内判断「这个活动值不值得去」</b>
+  <b>把 26 条校园活动摊开成卡片，一眼看清门槛、地点、时间与报名方式</b>
 </p>
 
 <p align="center">
-  <img alt="状态" src="https://img.shields.io/badge/%E7%8A%B6%E6%80%81-%E8%AE%BE%E8%AE%A1%E9%98%B6%E6%AE%B5-orange?style=for-the-badge">
-  <img alt="代码" src="https://img.shields.io/badge/%E4%BB%A3%E7%A0%81-%E5%B0%9A%E6%9C%AA%E5%BC%80%E5%A7%8B-lightgrey?style=for-the-badge">
+  <img alt="状态" src="https://img.shields.io/badge/%E7%8A%B6%E6%80%81-%E5%8F%AF%E7%94%A8-brightgreen?style=for-the-badge">
+  <img alt="依赖" src="https://img.shields.io/badge/%E4%BE%9D%E8%B5%96-%E9%9B%B6-blue?style=for-the-badge">
+  <img alt="测试" src="https://img.shields.io/badge/%E6%B5%8B%E8%AF%95-81%20%E9%A1%B9%E9%80%9A%E8%BF%87-brightgreen?style=for-the-badge">
   <img alt="活动库" src="https://img.shields.io/badge/%E6%B4%BB%E5%8A%A8%E5%BA%93-26%20%E6%9D%A1-blue?style=for-the-badge">
-  <img alt="协作约定" src="https://img.shields.io/badge/%E5%8D%8F%E4%BD%9C%E7%BA%A6%E5%AE%9A-AGENTS.md-blueviolet?style=for-the-badge">
   <img alt="许可证" src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-%E5%BE%85%E5%AE%9A-lightgrey?style=for-the-badge">
 </p>
 
@@ -16,76 +16,100 @@
 
 面向在校学生、重点考虑新生使用体验的**校园活动与机会平台**。
 
-产品要解决三件事：让同学能**发现**合适的活动与机会、能**理解**它是否值得参与、能低成本地**发布**活动并招募伙伴；同时处理多来源信息进入平台后带来的真实性、重复、过期与营销噪声问题。
+产品要解决三件事：让同学能**发现**合适的活动与机会、能**理解**它是否值得参与、让**组织者**能把信息补全。同时处理多来源信息进入平台后带来的真实性、重复、过期与营销噪声问题。
 
 ## 项目状态
 
-**当前处于设计阶段，尚未开始编码。** 仓库内容为需求、产品设计方案与结构化活动数据。
+**已实现可用。** 单进程 Node 服务 + 原生前端，零 npm 依赖、零构建步骤。
 
-- 设计方案已迭代至 **v4.0（轻量版）**，见 [design/产品设计方案.md](design/产品设计方案.md)
-- 活动数据已结构化为 26 条种子数据，见 [design/activities.seed.json](design/activities.seed.json)
-- 方案中仍有 **4 项待确认**（见设计方案第 9 章），其中"补充是否允许修改已有字段"会影响实现范围
+- 26 条活动预置展示，每张卡片显示时间、地点、门槛、截止与报名方式，缺失项显式标注"未注明"
+- 组织者凭**专属补充口令**补充或修正信息、上传活动资料，每次修改留痕可追溯
+- 附件在线预览全部在浏览器端完成：图片、PDF（Edge 内置阅读器）、txt（自动识别 UTF-8/GBK）、md、docx、pptx 逐页文字
+- **81 项自动化测试全部通过**（`node --test test/`，使用 Node 内置测试运行器）
+
+设计文档：[产品设计方案](design/产品设计方案.md)（v4.0 轻量版）· [技术方案](design/技术方案.md)
+
+## 快速开始
+
+**运行前提**：已安装 Node.js 22 或更高版本（[下载](https://nodejs.org)）。不需要 Docker、不需要 `npm install`、不需要构建。
+
+双击 **`start.bat`** 即可：它会检查 Node、启动本地服务，并在 2 秒后自动用 Edge 打开 `http://localhost:3000`。关闭窗口即停止服务。
+
+也可以在命令行手动启动：
+
+```bash
+node server.js          # 启动服务，浏览器访问 http://localhost:3000
+node server.js --reset  # 清空 data/ 并重新由种子数据生成（会丢弃全部补充与变更记录）
+```
+
+首次启动会自动由 `design/activities.seed.json` 生成 `data/activities.json`，并为每条活动生成 24 位补充口令。
+
+**给活动组织者发补充链接**：口令保存在 `data/activities.json` 的 `editToken` 字段，链接形如
+`http://localhost:3000/edit.html?id=01&token=<24 位口令>`。把对应活动的链接发给该活动的组织者即可。
 
 ## 仓库结构
 
 ```text
 .
-├── design/                        # 需求、设计文档与活动数据
-│   ├── 产品设计思路.txt            # 需求原文
-│   ├── 已知校园活动汇总.md          # 活动数据源（26 条，编号 01–26）
-│   ├── 产品设计方案.md             # 产品设计方案 v4.0（轻量版）：做什么、为什么
-│   ├── 技术方案.md                # 技术方案：架构、数据、接口、算法、测试
-│   ├── activities.seed.json       # 26 条结构化种子数据（含字段枚举定义）
-│   └── README参考.md              # 本地参考文件，未纳入版本控制
+├── server.js                      # 唯一的服务端文件（静态服务 + 6 个接口 + 上传与口令校验）
+├── start.bat                      # 双击启动：检查 Node、起服务、打开 Edge
+├── public/                        # 前端（无框架、无构建）
+│   ├── index.html                 #   卡片墙
+│   ├── activity.html              #   活动详情
+│   ├── edit.html                  #   组织者补充页
+│   ├── app.js                     #   共享逻辑：接口、字段渲染、附件预览、Markdown
+│   ├── ooxml.js                   #   docx / pptx 文字提取（自研，零依赖）
+│   └── style.css
+├── test/                          # 自动化测试（node:test，零依赖）
+│   ├── data.test.js               #   种子数据完整性
+│   ├── api.test.js                #   6 个接口（含 editToken 不泄露的专项断言）
+│   ├── upload.test.js             #   上传与文件类型校验（含伪装扩展名）
+│   ├── store.test.js              #   原子写、并发不丢更新、变更记录只追加
+│   ├── decode.test.js             #   中文编码探测与 OOXML 提取
+│   ├── frontend.test.js           #   转义与 Markdown 渲染的 XSS 防护
+│   └── helpers.js                 #   临时数据目录、合成 docx/pptx 等测试工具
+├── data/                          # 运行时数据（首次启动生成，不入库）
+│   ├── activities.json            #   26 条活动 + 补充口令
+│   ├── history.json               #   字段级变更记录
+│   └── uploads/<活动编号>/         #   上传的附件
+├── design/                        # 需求与设计文档
+│   ├── 产品设计思路.txt            #   需求原文
+│   ├── 已知校园活动汇总.md          #   活动数据源（26 条，编号 01–26）
+│   ├── 产品设计方案.md             #   产品设计方案 v4.0
+│   ├── 技术方案.md                #   技术方案
+│   ├── activities.seed.json       #   26 条结构化种子数据
+│   └── README参考.md              #   本地参考文件，未纳入版本控制
 ├── AGENTS.md                      # 协作约定
-├── .gitattributes                 # 换行符规范（仓库内统一 LF）
+├── .gitattributes
 ├── .gitignore
 └── README.md
 ```
-
-代码尚未创建。计划为单进程结构（`server.js` + `public/` + `data/`），不引入框架与构建工具，详见[技术方案](design/技术方案.md)第 3 章。
 
 ## 核心设计
 
 1. **活动卡片墙**：26 条活动直接以卡片展示，每张卡只放 4–5 个决定"去不去"的字段（时间、地点、门槛、截止、报名方式）。26 条无需分页，不加信息完整度评分——评分在现有数据下满分不可达，会失去区分度。
 2. **"未注明"直接写在字段位置**：地点覆盖率 15%、收获 0 条、费用金额 0 条，缺失项一律显式标注"未注明"，不留空也不编造。
-3. **补充口令编辑**：每个活动一个专属链接（`crypto.randomBytes` 生成），发给该活动的组织者即可补充信息、上传资料。**无需注册登录、无需账号体系、无需审核队列。**
-4. **去掉审核，保留留痕**：编辑直接生效，但每个字段的修改都记录原值、新值与时间，详情页展示"更新记录"。这是唯一保留的信任机制，实现成本只是一个 `history.json`。
-5. **浏览器端附件预览**：图片与 PDF 直接渲染（**PDF 用 Edge 内置阅读器**，不需要 PDF.js）；docx 用 mammoth.js 转 HTML；中文 txt 用 `TextDecoder` 识别 GBK；pptx 引导上传 PDF。**服务端零转换**，因此不需要 LibreOffice、Redis 与队列。
-6. **单进程零依赖**：一个 `server.js`（只用 Node 内置模块）+ JSON 文件存储 + 原生 HTML/CSS/JS，双击 `start.bat` 启动并在 Edge 打开。无 Docker、无 `npm install`、无构建步骤。
-7. **保留的两条数据规则**：09、20 作为 01、03 的变更记录合并，不单独成卡；已结束与报名已截止的条目默认不展示。
-
-## 快速开始
-
-当前无代码，建议按以下顺序阅读：
-
-1. [design/产品设计思路.txt](design/产品设计思路.txt) —— 需求原文，先明确要解决什么问题
-2. [design/产品设计方案.md](design/产品设计方案.md) —— 轻量版设计方案；第 1 章是定位与**承诺边界**，第 3–5 章是界面、补充口令与附件预览，第 6 章是技术选型，第 7 章是数据现实
-3. [design/技术方案.md](design/技术方案.md) —— 技术方案；第 1.3 节是**已在本机实测的内置能力**，第 4–5 章是数据层与服务端设计，第 7 章是关键算法，第 9 章是测试方案
-4. [design/activities.seed.json](design/activities.seed.json) —— 26 条结构化数据，`_meta` 内含字段枚举与覆盖率
-
-**技术栈**（尚未落地）：单进程 Node（只用 `node:http` / `node:crypto` 等内置模块，**零 npm 依赖**）+ JSON 文件存储（升级路径为 `node:sqlite`，本机已验证可用）+ 原生 HTML/CSS/JS 前端（**无构建步骤**）+ `start.bat` 启动并在 Edge 打开 `localhost:3000`。运行前提仅为已安装 Node ≥ 22。
+3. **补充口令编辑**：每个活动一个专属链接，发给该活动的组织者即可补充信息、上传资料。**无需注册登录、无需账号体系、无需审核队列。**
+4. **去掉审核，保留留痕**：编辑直接生效，但每个字段的修改都记录原值与时间，详情页展示"更新记录"。这是唯一保留的信任机制，实现成本只是一个 `history.json`。
+5. **浏览器端附件预览**：PDF 用 **Edge 内置阅读器**（不需要 PDF.js）；docx/pptx 由 `public/ooxml.js` 自行解压 ZIP 并提取文字（不需要 mammoth，也无需联网下载）；中文 txt 用 `TextDecoder` 自动识别 GBK。**服务端零转换**，因此不需要 LibreOffice、Redis 与队列。
+6. **单进程零依赖**：一个 `server.js`（只用 Node 内置模块）+ JSON 文件存储 + 原生 HTML/CSS/JS。无 Docker、无 `npm install`、无构建步骤。连 multipart 上传解析都用 Node 内置的 `Request.formData()`。
+7. **保留的两条数据规则**：09、20 作为 01、03 的变更记录合并（并把地点回填给 01），不单独成卡；已结束与报名已截止的条目默认不展示。
 
 ## 常用命令
 
-仓库当前仅使用 Git。测试与运行命令在代码落地后启用（测试方案见[技术方案](design/技术方案.md)第 9 章，使用 Node 内置测试运行器，同样是零依赖）：
-
 ```bash
-git log --oneline     # 查看提交历史
-git status            # 查看工作区状态
-git show HEAD         # 查看最近一次改动
+node server.js        # 启动服务（默认 http://localhost:3000）
+node server.js --reset # 重新由种子数据初始化
+node --test test/     # 运行全部测试（81 项）
 ```
 
-```bash
-node --test test/     # 运行全部测试（待代码落地）
-node server.js        # 启动本地服务，浏览器访问 http://localhost:3000
-```
+> **测试必须使用默认的进程隔离模式**（即上面的 `node --test test/`）。`server.js` 是单实例模块，若改用 `--experimental-test-isolation=none` 让多个测试文件共享进程，会直接报错并提示——这不是产品缺陷，而是该模式与单实例模块不兼容。
 
-校验种子数据可解析且条目数正确（当前唯一的自动化验证）：
+启动后可在浏览器验证：
 
-```powershell
-(Get-Content design/activities.seed.json -Raw -Encoding UTF8 | ConvertFrom-Json).entries.Count   # 期望 26
-```
+- 卡片墙：`http://localhost:3000/`
+- 活动详情：`http://localhost:3000/activity.html?id=01`
+- 组织者补充：`http://localhost:3000/edit.html?id=01&token=<口令>`
 
 ## 数据说明
 
@@ -93,10 +117,21 @@ node server.js        # 启动本地服务，浏览器访问 http://localhost:30
 
 **需要预先知道的两个覆盖率事实**（26 条实测，详见设计方案 §7.1）：
 
-- **线下明确地点仅 4 条（15%）**，另有 2 条为线上活动、2 条明确待确认、18 条未提及 → 标注机制上线后，其主要产出是**把"地点未注明"这一缺口显式暴露**，而非给出地点
-- **收获（学分/工时/证书）0 条（0%）** → 决策卡的"收获"行将长期显示"未收录"，产品不编造也不留空
+- **线下明确地点仅 4 条（15%）**，另有 2 条为线上活动、2 条明确待确认、18 条未提及 → 卡片上会大量出现"地点 未注明"，这既是给学生的风险提示，也是给组织者的补充提示
+- **收获（学分/工时/证书）0 条（0%）** → "收获"行长期显示"未注明"，产品不编造也不留空
 
-数据源中还包含若干真实场景的信息陷阱，方案已逐条对应处理：同一活动的重复与增量发布、已过时效的条目、信息不完整、疑似营销或诈骗、无需报名与非先到先得、非活动类的资料合集。
+数据源中还包含若干真实场景的信息陷阱，均已逐条处理：同一活动的重复与增量发布（09/20 已合并）、已过时效的条目（04 已结束、19 报名已截止，默认不展示）、信息不完整、疑似营销或诈骗（24/25 标注风险）、无需报名与非先到先得、非活动类的资料合集。
+
+## 安全边界
+
+本系统的安全模型建立在**"只在本机回环地址运行"**这一前提上：
+
+- 服务只绑定 `127.0.0.1`，不对外网暴露。**若要给他人访问，必须先加访问控制，不能直接把地址改成 `0.0.0.0`。**
+- 上传做三重校验：扩展名白名单 + 文件大小上限 + **magic number 文件头校验**（防改扩展名）；含宏的 Office 格式（`.docm`/`.pptm`/`.xlsm`）一律拒绝
+- 附件只存储与预览，服务端从不解析或执行上传内容；docx 的解析发生在浏览器端
+- 补充口令 96 bit 随机、用 `timingSafeEqual` 比较；所有接口响应**显式剔除口令字段**（有专项测试断言）
+- 前端统一转义后输出，Markdown 渲染先转义再套规则、不支持内联 HTML、链接只放行 http/https（有 XSS 测试覆盖）
+- 未做病毒扫描（ClamAV 签名库过重，单机使用收益极低）
 
 ## 协作约定
 
@@ -104,8 +139,6 @@ node server.js        # 启动本地服务，浏览器访问 http://localhost:30
 
 - 每次改动完成后，都必须创建一个对应的 Git commit，以便后续追踪和回滚
 - 每次改动后，都必须编写或更新相关测试，并在交付给用户前，确保所有测试和验证全部通过
-
-> 当前仓库尚无代码，因此第二条对文档类改动没有执行落点。测试框架已在[技术方案](design/技术方案.md)第 9 章确定：使用 Node 内置的 `node:test`（零依赖），代码落地后以 `node --test test/` 运行。
 
 ## 版本演进
 
@@ -115,18 +148,9 @@ node server.js        # 启动本地服务，浏览器访问 http://localhost:30
 | v2.0 | 改为白名单挂靠式发布以消除虚假信息；基于 26 条数据的实测覆盖率重做设计 |
 | v3.0 | 改为卡片墙展示 + 组织者补充内容 |
 | v4.0 | **大幅减重**：单进程 Node 零依赖、浏览器端附件预览、补充口令替代账号体系；砍掉报名/组队/评价/课表冲突/新生引导/管理后台/完整度评分/地图导航 |
+| 实现 | 按 v4.0 落地：`server.js` + 三页面 + `ooxml.js` + `start.bat` + 81 项测试 |
 
 > 提交历史见 `git log --oneline`。
-
-## 安全
-
-已完成设计、尚未实现。活动资料支持 PPT / Word / 图片 / txt / md 上传与在线预览，因此安全重点是**不可信文档的处理**：
-
-- 扩展名白名单 + magic number 双重校验，拒绝含宏格式（`.docm` / `.pptm` / `.xlsm`）
-- 单文件 ≤ 50MB、单活动 ≤ 10 个附件；ClamAV 病毒扫描，命中即隔离
-- 文档转换在独立容器内执行，禁外网、限时限额
-- 权限采用 RBAC + 资源级所有权校验；附件通过带签名的临时 URL 访问
-- 隐私：学号仅后台可见，联系方式默认不公开，联系仅走站内私信
 
 ## 许可证
 

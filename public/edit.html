@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>补充活动内容 · 校园活动与机会平台</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="inner">
+    <a class="site-title" href="/">校园活动与机会平台</a>
+    <span class="site-sub"><a href="/">← 返回全部活动</a></span>
+  </div>
+</header>
+
+<div class="wrap" id="app">
+  <div class="empty">加载中…</div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var root = document.getElementById('app');
+  var params = new URLSearchParams(location.search);
+  var id = params.get('id') || '';
+  var token = params.get('token') || '';
+  var current = null;   // 当前活动数据
+
+  var SIGNUP = ['无需报名', '站内报名', '需登记', '需审核', '站内组队', '外链', '站外私聊', '候补', '未注明'];
+  var DEADLINE_STATUS = ['明确', '已截止', '长期', '未注明', '无需报名'];
+
+  function options(list, selected) {
+    return list.map(function (v) {
+      return '<option value="' + App.esc(v) + '"' + (v === selected ? ' selected' : '') + '>' + App.esc(v) + '</option>';
+    }).join('');
+  }
+
+  function rowText(key, label, placeholder) {
+    return '<div class="form-row"><label for="f_' + key + '">' + label + '</label>' +
+      '<input type="text" id="f_' + key + '" data-field="' + key + '" placeholder="' + App.esc(placeholder) + '">' +
+      '<div class="hint">当前：' + App.val(current.fields[key]) + '　（留空表示不修改）</div></div>';
+  }
+
+  function renderTokenGate(message) {
+    root.innerHTML =
+      '<h1 class="detail-title">补充活动内容</h1>' +
+      '<div class="panel">' +
+        (message ? '<div class="msg err">' + App.esc(message) + '</div>' : '') +
+        '<p>补充活动信息需要组织者专属口令。口令由活动主办方持有；如你是该活动的组织者但尚未收到口令，请联系平台管理员。</p>' +
+        '<div class="form-row"><label for="tok">补充口令</label>' +
+          '<input type="text" id="tok" placeholder="请输入 24 位口令" autocomplete="off">' +
+          '<div class="hint">形如 3f9a2c… 的 24 位十六进制字符串</div>' +
+        '</div>' +
+        '<button class="btn" id="go">验证并进入编辑</button>' +
+      '</div>';
+    document.getElementById('go').addEventListener('click', function () {
+      var v = document.getElementById('tok').value.trim();
+      if (!v) return;
+      location.href = '/edit.html?id=' + encodeURIComponent(id) + '&token=' + encodeURIComponent(v);
+    });
+    document.getElementById('tok').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('go').click();
+    });
+  }
+
+  function renderForm() {
+    var f = current.fields;
+    root.innerHTML =
+      '<h1 class="detail-title">补充活动内容</h1>' +
+      '<div class="detail-meta">编号 ' + App.esc(current.id) + ' · ' + App.esc(current.name) + '　' +
+        '<span style="color:var(--ok)">口令已验证 ✓</span></div>' +
+
+      '<div class="panel">' +
+        '<h2>补充与修正</h2>' +
+        '<p class="hint" style="margin-top:0">只填写你能确认的内容；<b>留空表示保持原值不变</b>。每次修改都会记入更新记录并显示原值。</p>' +
+        '<div class="form-grid">' +
+          rowText('schedule', '活动时间', '如：9月21日 19:30—20:30') +
+          rowText('deadline', '报名截止', '如：9月24日 22:00') +
+        '</div>' +
+        '<div class="form-row"><label for="f_deadline_status">截止状态</label>' +
+          '<select id="f_deadline_status" data-field="deadline_status">' +
+            '<option value="">（不修改）</option>' + options(DEADLINE_STATUS, f.deadline_status) +
+          '</select><div class="hint">当前：' + App.val(f.deadline_status) + '</div></div>' +
+        rowText('location', '地点', '如：实验楼 A402') +
+        '<div class="form-grid">' +
+          rowText('quota', '名额', '如：限 30 人 / 座位有限') +
+          rowText('cost', '费用', '如：免费 / AA / 30 元') +
+        '</div>' +
+        '<div class="form-grid">' +
+          rowText('outcome', '收获', '如：第二课堂学分 0.5 / 志愿工时 4h') +
+          rowText('audience', '面向人群', '如：全校学生 / 大一新生') +
+        '</div>' +
+        rowText('threshold', '参与门槛', '如：零基础可参加 / 需提交自我介绍') +
+        '<div class="form-row"><label for="f_signup_mode">报名方式</label>' +
+          '<select id="f_signup_mode" data-field="signup_mode">' +
+            '<option value="">（不修改）</option>' + options(SIGNUP, f.signup_mode) +
+          '</select><div class="hint">当前：' + App.val(f.signup_mode) + '</div></div>' +
+        '<div class="form-row"><label for="f_reason">变更原因（可选）</label>' +
+          '<input type="text" id="f_reason" placeholder="如：场地调整、补充报名入口">' +
+          '<div class="hint">会显示在更新记录里，便于学生理解为什么变了。</div></div>' +
+        '<button class="btn" id="save">保存修改</button>' +
+        '<div id="saveMsg"></div>' +
+      '</div>' +
+
+      '<div class="panel">' +
+        '<h2>📎 活动资料</h2>' +
+        '<p class="hint" style="margin-top:0">支持 pptx / docx / pdf / png / jpg / gif / webp / txt / md，单文件不超过 20MB，每个活动最多 10 个。' +
+          'PPT 建议同时上传 PDF 版本，以便学生在线看到原始版式。</p>' +
+        '<div class="form-row"><input type="file" id="fileInput" multiple ' +
+          'accept=".pptx,.docx,.pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.md"></div>' +
+        '<button class="btn secondary" id="upload">上传</button>' +
+        '<div id="upMsg"></div>' +
+        '<ul class="files" id="fileList"></ul>' +
+      '</div>';
+
+    renderFiles();
+
+    document.getElementById('save').addEventListener('click', save);
+    document.getElementById('upload').addEventListener('click', upload);
+  }
+
+  function renderFiles() {
+    var el = document.getElementById('fileList');
+    if (!el) return;
+    App.api('/api/activities/' + encodeURIComponent(id)).then(function (d) {
+      el.innerHTML = d.files.length
+        ? d.files.map(function (f) {
+            return '<li><span class="fname">' + App.esc(f.name) + '</span>' +
+              '<span class="fsize">' + App.fmtSize(f.size) + '</span>' +
+              '<a class="btn ghost" href="' + App.esc(f.url) + '" download>下载</a></li>';
+          }).join('')
+        : '<li><span class="preview-note">尚未上传资料</span></li>';
+    }).catch(function () { /* 忽略 */ });
+  }
+
+  function collect() {
+    var patch = {};
+    root.querySelectorAll('[data-field]').forEach(function (el) {
+      var key = el.dataset.field;
+      var v = el.value.trim();
+      if (!v) return;                        // 留空 = 不修改
+      var old = current.fields[key];
+      if (v === (old == null ? '' : String(old))) return;  // 与原值相同也无需提交
+      patch[key] = v;
+    });
+    var reason = (document.getElementById('f_reason').value || '').trim();
+    if (reason) patch.reason = reason;
+    return patch;
+  }
+
+  async function save() {
+    var btn = document.getElementById('save');
+    var msg = document.getElementById('saveMsg');
+    var patch = collect();
+    var keys = Object.keys(patch).filter(function (k) { return k !== 'reason'; });
+    if (!keys.length) {
+      msg.innerHTML = '<div class="msg warn">没有检测到改动。请填写需要补充或修正的字段。</div>';
+      return;
+    }
+    btn.disabled = true;
+    msg.innerHTML = '<div class="msg">保存中…</div>';
+    try {
+      var r = await App.api('/api/activities/' + encodeURIComponent(id) + '?token=' + encodeURIComponent(token), {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(patch),
+      });
+      msg.innerHTML = '<div class="msg ok">已保存，共修改 ' + r.changed.length + ' 个字段。' +
+        '<a href="/activity.html?id=' + encodeURIComponent(id) + '">查看活动页</a></div>';
+      var d = await App.api('/api/activities/' + encodeURIComponent(id));
+      current = d.activity;
+      root.querySelectorAll('[data-field]').forEach(function (el) {
+        var key = el.dataset.field;
+        var hint = el.parentElement.querySelector('.hint');
+        if (hint) hint.innerHTML = '当前：' + App.val(current.fields[key]) + '　（留空表示不修改）';
+        el.value = '';
+      });
+      document.getElementById('f_reason').value = '';
+    } catch (e) {
+      msg.innerHTML = '<div class="msg err">保存失败：' + App.esc(e.message) + '</div>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function upload() {
+    var btn = document.getElementById('upload');
+    var input = document.getElementById('fileInput');
+    var msg = document.getElementById('upMsg');
+    if (!input.files || !input.files.length) {
+      msg.innerHTML = '<div class="msg warn">请先选择文件。</div>';
+      return;
+    }
+    var fd = new FormData();
+    for (var i = 0; i < input.files.length; i++) fd.append('file', input.files[i]);
+    btn.disabled = true;
+    msg.innerHTML = '<div class="msg">上传中…</div>';
+    try {
+      var res = await fetch('/api/activities/' + encodeURIComponent(id) + '/files?token=' + encodeURIComponent(token), {
+        method: 'POST', body: fd,
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.message || ('上传失败（HTTP ' + res.status + '）'));
+      var html = '<div class="msg ok">已接收 ' + data.accepted.length + ' 个文件。' +
+        '<a href="/activity.html?id=' + encodeURIComponent(id) + '">查看活动页</a></div>';
+      if (data.rejected && data.rejected.length) {
+        html += '<div class="msg err">被拒绝：' + data.rejected.map(function (r) {
+          return App.esc(r.name) + '（' + App.esc(r.message) + '）';
+        }).join('；') + '</div>';
+      }
+      msg.innerHTML = html;
+      input.value = '';
+      renderFiles();
+    } catch (e) {
+      msg.innerHTML = '<div class="msg err">' + App.esc(e.message) + '</div>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function init() {
+    if (!id) { root.innerHTML = '<div class="empty">缺少活动编号</div>'; return; }
+    try {
+      var d = await App.api('/api/activities/' + encodeURIComponent(id));
+      current = d.activity;
+    } catch (e) {
+      root.innerHTML = '<div class="empty">' + App.esc(e.message) + '</div>';
+      return;
+    }
+    if (!token) { renderTokenGate(''); return; }
+    try {
+      await App.api('/api/activities/' + encodeURIComponent(id) + '/verify?token=' + encodeURIComponent(token));
+    } catch (e) {
+      renderTokenGate(e.status === 403 ? '口令无效或已重置，请重新输入。' : e.message);
+      return;
+    }
+    renderForm();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
