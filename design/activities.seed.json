@@ -1,0 +1,993 @@
+﻿{
+    "_meta":  {
+                  "source":  "已知校园活动汇总.docx",
+                  "source_section":  "四、校园活动与机会信息",
+                  "entry_count":  26,
+                  "purpose":  "白名单活动库的种子数据。发布活动时必须挂靠其中一条（Activity.whitelist_entry_id 非空外键）。",
+                  "baseline_date":  "9月19日",
+                  "baseline_date_note":  "源文件修改时间为 2026/9/19 14:30，据此推断数据基准日为 9 月 19 日；原文所有日期均无年份，入库时需补充学期标识（建议 2026 秋季学期）。",
+                  "coverage":  {
+                                   "线下明确地点":  4,
+                                   "线上无需地点":  2,
+                                   "地点待确认":  2,
+                                   "地点未注明":  18,
+                                   "面向人群":  12,
+                                   "参与门槛":  15,
+                                   "投入要求":  15,
+                                   "具体时间":  16,
+                                   "报名截止":  8,
+                                   "名额":  5,
+                                   "费用":  2,
+                                   "收获":  0
+                               },
+                  "field_notes":  {
+                                      "outcome":  "收获（学分/工时/证书）：原文 26 条全部未提及，故均为 null。产品侧必须显示“未收录”，不可留空或编造。",
+                                      "requirement":  "综合要求，由 audience + threshold + commitment 合成，供标注块直接展示。",
+                                      "merged":  "true 表示该条是父活动的补充通知/变更记录，不独立成条展示，应合并到 parent_id 指向的活动。"
+                                  },
+                  "enums":  {
+                                "location_status":  "明确 | 线上 | 待确认 | 未注明",
+                                "signup_mode":  "无需报名 | 站内报名 | 需登记 | 需审核 | 站内组队 | 外链 | 站外私聊 | 候补 | 未注明 | null",
+                                "risk_level":  "none | low | medium | high"
+                            },
+                  "coverage_note":  "覆盖率由本文件字段直接统计（分母 26），与设计方案 §3.2 一致。注意：cost 有值的 2 条均未给出金额（12 为“未提供”、22 为“AA”），故“已知具体费用金额”实为 0 条。"
+              },
+    "entries":  [
+                    {
+                        "id":  "01",
+                        "name":  "“蓝桥杯”程序设计校内训练营",
+                        "raw":  "9月24日22:00报名截止；原计划9月20日起每周六19:00训练；面向全校学生；零基础可参加",
+                        "publisher_type":  "未注明",
+                        "category":  "训练营",
+                        "audience":  "全校学生",
+                        "threshold":  "零基础可参加",
+                        "commitment":  "每周六19:00，持续性训练",
+                        "requirement":  "面向全校学生，零基础可参加；每周六19:00训练，需持续参与；须在9月24日22:00前报名",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "原计划9月20日起，每周六19:00",
+                        "deadline":  "9月24日 22:00",
+                        "deadline_status":  "明确",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "存在补充通知"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+                                         "09"
+                                     ],
+                        "notes":  "09 为其补充通知：首次训练改为9月21日19:30，地点改至实验楼A402，报名截止不变。地点以09为准。"
+                    },
+                    {
+                        "id":  "02",
+                        "name":  "AI应用入门公开课",
+                        "raw":  "9月19日19:00；计算机学院教学楼；面向全校学生；无需报名；预计90分钟",
+                        "publisher_type":  "未注明",
+                        "category":  "公开课",
+                        "audience":  "全校学生",
+                        "threshold":  null,
+                        "commitment":  "约90分钟",
+                        "requirement":  "面向全校学生，无门槛；无需报名，直接到场；约90分钟",
+                        "location":  "计算机学院教学楼",
+                        "location_status":  "明确",
+                        "online":  false,
+                        "schedule":  "9月19日 19:00",
+                        "deadline":  null,
+                        "deadline_status":  "无需报名",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "无需报名",
+                                      "新生友好"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "基准日当天进行。适合作为新生专区样本。"
+                    },
+                    {
+                        "id":  "03",
+                        "name":  "大学生创新创业项目团队招募",
+                        "raw":  "招募开发、设计、材料成员；每周需稳定投入4小时以上；9月22日18:00截止；需提交简短自我介绍",
+                        "publisher_type":  "未注明",
+                        "category":  "团队招募",
+                        "audience":  null,
+                        "threshold":  "需提交简短自我介绍",
+                        "commitment":  "每周稳定投入4小时以上",
+                        "requirement":  "招募开发、设计、材料方向成员；每周需稳定投入4小时以上；须提交简短自我介绍；9月22日18:00截止",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  "9月22日 18:00",
+                        "deadline_status":  "明确",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "存在补充通知"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+                                         "20"
+                                     ],
+                        "notes":  "20 为其补充说明：开发方向名额已满，现主要补充设计与材料成员，截止时间不变。"
+                    },
+                    {
+                        "id":  "04",
+                        "name":  "数学建模竞赛经验分享会",
+                        "raw":  "直播时间为9月18日19:30；不限专业；直播已结束，活动方预计9月20日上传回放",
+                        "publisher_type":  "未注明",
+                        "category":  "分享会",
+                        "audience":  "不限专业",
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "不限专业；线上直播，无需报名",
+                        "location":  "线上直播",
+                        "location_status":  "线上",
+                        "online":  true,
+                        "schedule":  "9月18日 19:30（已结束）",
+                        "deadline":  null,
+                        "deadline_status":  "无需报名",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "已结束",
+                                      "回放待上传"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "时效陷阱样本：直播已于基准日前结束，回放预计9月20日上传。列表应默认过滤，详情页提供回放订阅。"
+                    },
+                    {
+                        "id":  "05",
+                        "name":  "校园公益志愿服务活动",
+                        "raw":  "活动时间9月27日8:30—17:00；9月20日12:00报名截止；预计服务8小时；需提前到场签到",
+                        "publisher_type":  "未注明",
+                        "category":  "志愿服务",
+                        "audience":  null,
+                        "threshold":  "需提前到场签到",
+                        "commitment":  "9月27日8:30—17:00，预计服务8小时",
+                        "requirement":  "需提前到场签到；服务时长约8小时（8:30—17:00）；9月20日12:00报名截止",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月27日 8:30—17:00",
+                        "deadline":  "9月20日 12:00",
+                        "deadline_status":  "明确",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "收获信息缺失"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "原文仅提及“预计服务8小时”，未说明是否计入志愿工时。outcome 保持 null，不得推断为“有志愿工时”。"
+                    },
+                    {
+                        "id":  "06",
+                        "name":  "Web开发零基础学习小组",
+                        "raw":  "9月23日起每周三19:30开展，共6周；面向零基础学生；限30人；报名时间未注明，满员即止",
+                        "publisher_type":  "未注明",
+                        "category":  "学习小组",
+                        "audience":  "零基础学生",
+                        "threshold":  "零基础",
+                        "commitment":  "9月23日起每周三19:30，共6周",
+                        "requirement":  "面向零基础学生；每周三19:30开展，共6周；限30人，满员即止",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月23日起 每周三19:30（共6周）",
+                        "deadline":  null,
+                        "deadline_status":  "未注明，满员即止",
+                        "quota":  "限30人",
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "报名截止未注明",
+                                      "满员即止",
+                                      "信息不完整"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "报名截止未注明，是“先到先得”型，产品应提示“满员即止，请尽早报名”而非显示倒计时。"
+                    },
+                    {
+                        "id":  "07",
+                        "name":  "AI创新应用挑战赛",
+                        "raw":  "2—4人组队；9月21日18:00前完成校内意向登记；10月20日提交作品；意向登记不等同于最终作品提交",
+                        "publisher_type":  "未注明",
+                        "category":  "竞赛",
+                        "audience":  null,
+                        "threshold":  "需组队（2—4人）",
+                        "commitment":  "2—4人组队，10月20日提交作品",
+                        "requirement":  "需2—4人组队；9月21日18:00前完成校内意向登记；10月20日提交作品；意向登记不等同于最终作品提交",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "作品提交截止 10月20日",
+                        "deadline":  "校内意向登记 9月21日 18:00；作品提交 10月20日",
+                        "deadline_status":  "明确（两阶段）",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "需登记",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "需组队",
+                                      "两阶段",
+                                      "意向登记不等同于报名完成"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "两阶段截止时间必须同时展示，否则学生会误以为9月21日之后无法参加。"
+                    },
+                    {
+                        "id":  "08",
+                        "name":  "校园软件项目组招募",
+                        "raw":  "开发校园实用工具；面向大一、大二学生；希望成员了解Git基本操作；每周预计投入5小时；长期招募，满员即止",
+                        "publisher_type":  "未注明",
+                        "category":  "团队招募",
+                        "audience":  "大一、大二学生",
+                        "threshold":  "希望了解Git基本操作（非硬性）",
+                        "commitment":  "每周约5小时",
+                        "requirement":  "面向大一、大二学生；希望了解Git基本操作（非硬性要求）；每周约投入5小时；长期招募，满员即止",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "长期招募，满员即止",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "长期",
+                                      "满员即止",
+                                      "非硬性要求"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "“希望了解Git”是非硬性偏好，展示时必须与硬性门槛区分，避免吓退符合条件的新生。"
+                    },
+                    {
+                        "id":  "09",
+                        "name":  "程序设计训练营补充通知",
+                        "raw":  "因场地调整，首次训练改为9月21日19:30，地点改至实验楼A402；已报名同学无需重复提交；报名截止时间不变",
+                        "publisher_type":  "未注明",
+                        "category":  "通知/更新",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  null,
+                        "location":  "实验楼 A402",
+                        "location_status":  "明确",
+                        "online":  false,
+                        "schedule":  "首次训练 9月21日 19:30",
+                        "deadline":  null,
+                        "deadline_status":  "与01一致，不变",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  null,
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "更新通知",
+                                      "应合并至01"
+                                  ],
+                        "parent_id":  "01",
+                        "merged":  true,
+                        "children":  [
+
+                                     ],
+                        "changes":  [
+                                        {
+                                            "field":  "首次训练时间",
+                                            "from":  "9月20日",
+                                            "to":  "9月21日 19:30"
+                                        },
+                                        {
+                                            "field":  "地点",
+                                            "from":  "未注明",
+                                            "to":  "实验楼 A402"
+                                        },
+                                        {
+                                            "field":  "报名截止",
+                                            "from":  "9月24日 22:00",
+                                            "to":  "不变"
+                                        }
+                                    ],
+                        "notes":  "重复信息陷阱样本：不是新活动，而是 01 的变更记录。合并后 01 的地点字段应回填“实验楼 A402”。"
+                    },
+                    {
+                        "id":  "10",
+                        "name":  "前端开发经验交流会",
+                        "raw":  "9月19日15:00—16:30；线下A201并同步线上直播；无需报名",
+                        "publisher_type":  "未注明",
+                        "category":  "分享会",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  "90分钟（15:00—16:30）",
+                        "requirement":  "无需报名；线下与线上同步，可就近选择",
+                        "location":  "A201（线下）＋ 线上直播",
+                        "location_status":  "明确",
+                        "online":  true,
+                        "schedule":  "9月19日 15:00—16:30",
+                        "deadline":  null,
+                        "deadline_status":  "无需报名",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "无需报名",
+                                      "线上线下同步",
+                                      "新生友好"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "基准日当天进行。地点为 4 条明确地点之一。"
+                    },
+                    {
+                        "id":  "11",
+                        "name":  "大学生科研入门分享会",
+                        "raw":  "9月21日19:00—20:30；介绍论文检索、学生科研项目和导师联系方法；面向全校学生",
+                        "publisher_type":  "未注明",
+                        "category":  "分享会",
+                        "audience":  "全校学生",
+                        "threshold":  null,
+                        "commitment":  "90分钟（19:00—20:30）",
+                        "requirement":  "面向全校学生，无门槛；内容为论文检索、学生科研项目与导师联系方法",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月21日 19:00—20:30",
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "未注明",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "报名方式未注明",
+                                      "信息不完整"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "报名方式与地点均未注明，需向主办方补录。"
+                    },
+                    {
+                        "id":  "12",
+                        "name":  "全国高校计算机能力挑战赛",
+                        "raw":  "面向本科生；10月5日23:59报名截止；个人参赛；具体费用信息未提供",
+                        "publisher_type":  "未注明",
+                        "category":  "竞赛",
+                        "audience":  "本科生",
+                        "threshold":  "个人参赛",
+                        "commitment":  null,
+                        "requirement":  "面向本科生；个人参赛（无需组队）；10月5日23:59报名截止；费用未提供",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  null,
+                        "schedule":  null,
+                        "deadline":  "10月5日 23:59",
+                        "deadline_status":  "明确",
+                        "quota":  null,
+                        "cost":  "未提供",
+                        "outcome":  null,
+                        "signup_mode":  "未注明",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "费用信息缺失"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "费用是参赛决策的关键项，原文明确“未提供”。产品应显示“费用：未提供（建议向主办方确认）”。"
+                    },
+                    {
+                        "id":  "13",
+                        "name":  "科研助理招募",
+                        "raw":  "协助数据整理和实验工作；仅限大二及以上学生；每周预计投入6小时；9月21日截止报名",
+                        "publisher_type":  "未注明",
+                        "category":  "岗位招募",
+                        "audience":  "大二及以上学生",
+                        "threshold":  "仅限大二及以上（硬性）",
+                        "commitment":  "每周约6小时",
+                        "requirement":  "仅限大二及以上学生（硬性限制，大一新生不可参加）；每周约投入6小时；9月21日报名截止；工作内容为数据整理与实验协助",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  "9月21日",
+                        "deadline_status":  "明确",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "年级硬性限制"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "典型的“新生不能参加”条目，必须在列表卡片就显示年级限制，避免新生点进去才发现不符合。"
+                    },
+                    {
+                        "id":  "14",
+                        "name":  "Git与GitHub零基础工作坊",
+                        "raw":  "9月21日19:00—20:30；主要面向大一新生；限40人；需提前预约，提交报名表不代表最终录取，以审核通知为准",
+                        "publisher_type":  "未注明",
+                        "category":  "工作坊",
+                        "audience":  "主要面向大一新生",
+                        "threshold":  "零基础；需提前预约并通过审核",
+                        "commitment":  "90分钟（19:00—20:30）",
+                        "requirement":  "主要面向大一新生，零基础可参加；限40人；需提前预约，提交报名表不代表最终录取，以审核通知为准",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月21日 19:00—20:30",
+                        "deadline":  null,
+                        "deadline_status":  "需提前预约（未注明具体截止）",
+                        "quota":  "限40人",
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "需审核",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "名额限制",
+                                      "需审核",
+                                      "报名不等于录取"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "非先到先得陷阱样本：按钮文案必须写明“报名≠录取”，否则学生误以为报名成功。对新生友好度高。"
+                    },
+                    {
+                        "id":  "15",
+                        "name":  "AI应用创意挑战",
+                        "raw":  "9月23日23:59前提交创意方案；9月30日前提交最终作品；允许个人或团队参加；进入展示环节后可再组队",
+                        "publisher_type":  "未注明",
+                        "category":  "竞赛",
+                        "audience":  null,
+                        "threshold":  "个人或团队均可",
+                        "commitment":  "两阶段：创意方案 + 最终作品",
+                        "requirement":  "允许个人或团队参加；9月23日23:59前提交创意方案；9月30日前提交最终作品；进入展示环节后可再组队",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  "创意方案 9月23日 23:59；最终作品 9月30日",
+                        "deadline_status":  "明确（两阶段）",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "两阶段",
+                                      "可个人或团队"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "对“不敢一个人参加”的新生友好：明确允许个人参与。"
+                    },
+                    {
+                        "id":  "16",
+                        "name":  "校园摄影志愿者招募",
+                        "raw":  "长期招募；参与校内大型活动摄影；具体报名截止时间未注明；有摄影设备者优先但不作硬性要求",
+                        "publisher_type":  "未注明",
+                        "category":  "志愿者招募",
+                        "audience":  null,
+                        "threshold":  "有摄影设备者优先（非硬性）",
+                        "commitment":  "长期，参与校内大型活动摄影",
+                        "requirement":  "长期招募；参与校内大型活动摄影；有摄影设备者优先但不作硬性要求；报名截止时间未注明",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "长期",
+                                      "截止未注明",
+                                      "非硬性要求",
+                                      "信息不完整"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "与 08 同属“长期、无截止”类型，不应显示倒计时。"
+                    },
+                    {
+                        "id":  "17",
+                        "name":  "Python程序设计学习资料合集",
+                        "raw":  "包含课程、练习和项目案例；资料长期开放；当前网盘提取信息有效至9月22日，后续将统一更新",
+                        "publisher_type":  "未注明",
+                        "category":  "资料/资源",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "非活动类，无参与门槛；网盘提取信息有效至9月22日，后续统一更新",
+                        "location":  "线上（网盘）",
+                        "location_status":  "线上",
+                        "online":  true,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "资料长期开放；网盘信息有效至9月22日",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "外链",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "非活动类",
+                                      "外链有效期",
+                                      "链接可能失效"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "非活动类陷阱样本：不应套用“活动时间/地点/报名”字段，需独立的“资料”类型，并提示链接有效期。"
+                    },
+                    {
+                        "id":  "18",
+                        "name":  "网络安全兴趣交流小组",
+                        "raw":  "首次交流时间为9月19日19:30；之后每两周开展一次；面向CTF、Web安全等方向感兴趣的学生；不限基础",
+                        "publisher_type":  "未注明",
+                        "category":  "兴趣小组",
+                        "audience":  "对CTF、Web安全等方向感兴趣的学生",
+                        "threshold":  "不限基础",
+                        "commitment":  "每两周一次",
+                        "requirement":  "面向对CTF、Web安全感兴趣的学生，不限基础；首次9月19日19:30，之后每两周一次",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "首次 9月19日 19:30，之后每两周一次",
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "未注明",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "周期性",
+                                      "报名方式未注明"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "周期性活动，需要“重复规则”字段而非单一时间点。"
+                    },
+                    {
+                        "id":  "19",
+                        "name":  "学生创新项目路演观摩",
+                        "raw":  "活动时间9月20日14:30；原报名截止时间为9月18日22:00；活动方说明如现场仍有余位，可接受候补入场",
+                        "publisher_type":  "未注明",
+                        "category":  "观摩",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "报名已于9月18日22:00截止；如现场仍有余位，可接受候补入场",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月20日 14:30",
+                        "deadline":  "9月18日 22:00（已过）",
+                        "deadline_status":  "已截止",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "候补",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "报名已截止",
+                                      "可候补"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "时效陷阱样本：报名已截止但活动未开始。应提供“候补通知”而非直接隐藏，否则学生错失余位。"
+                    },
+                    {
+                        "id":  "20",
+                        "name":  "创新创业项目团队补充说明",
+                        "raw":  "开发方向名额已满，现主要补充设计与材料成员；9月22日18:00截止；此前已投递者无需重复提交",
+                        "publisher_type":  "未注明",
+                        "category":  "通知/更新",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  null,
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "与03一致，不变",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  null,
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "更新通知",
+                                      "应合并至03"
+                                  ],
+                        "parent_id":  "03",
+                        "merged":  true,
+                        "children":  [
+
+                                     ],
+                        "changes":  [
+                                        {
+                                            "field":  "招募方向",
+                                            "from":  "开发、设计、材料",
+                                            "to":  "开发已满，仅补充设计与材料成员"
+                                        },
+                                        {
+                                            "field":  "报名截止",
+                                            "from":  "9月22日 18:00",
+                                            "to":  "不变"
+                                        }
+                                    ],
+                        "notes":  "重复信息陷阱样本：不是新活动，而是 03 的变更记录。合并后 03 的招募方向字段应更新。"
+                    },
+                    {
+                        "id":  "21",
+                        "name":  "计算机学院AI产品设计分享会",
+                        "raw":  "计算机学院发布；9月20日19:00；明德楼B203；面向全校学生；无需报名，座位有限",
+                        "publisher_type":  "学院（计算机学院）",
+                        "category":  "分享会",
+                        "audience":  "全校学生",
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "面向全校学生，无门槛；无需报名，直接到场；座位有限，建议提前到场",
+                        "location":  "明德楼 B203",
+                        "location_status":  "明确",
+                        "online":  false,
+                        "schedule":  "9月20日 19:00",
+                        "deadline":  null,
+                        "deadline_status":  "无需报名",
+                        "quota":  "座位有限",
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "无需报名",
+                                      "座位有限",
+                                      "新生友好"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "信息质量最高的条目之一：发布方、时间、地点、人群齐全。适合作为新生专区样本。"
+                    },
+                    {
+                        "id":  "22",
+                        "name":  "学生发起｜周末羽毛球约球",
+                        "raw":  "学生个人发布；9月20日16:00；计划6—8人；费用AA；场地待最终确认",
+                        "publisher_type":  "学生个人",
+                        "category":  "学生自发活动",
+                        "audience":  null,
+                        "threshold":  "计划6—8人",
+                        "commitment":  "9月20日16:00",
+                        "requirement":  "学生个人发起，未认证；计划6—8人；费用AA；场地待最终确认",
+                        "location":  null,
+                        "location_status":  "待确认",
+                        "online":  false,
+                        "schedule":  "9月20日 16:00",
+                        "deadline":  null,
+                        "deadline_status":  "未注明，满6—8人即止",
+                        "quota":  "6—8人",
+                        "cost":  "AA（金额未注明）",
+                        "outcome":  null,
+                        "signup_mode":  "站内组队",
+                        "risk_level":  "low",
+                        "risk_reasons":  [
+                                             "个人发起未认证",
+                                             "场地未确认"
+                                         ],
+                        "flags":  [
+                                      "个人发起未认证",
+                                      "地点待定"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "对应原需求“学生自主发布活动、招募伙伴”。在白名单封闭策略下，此类活动只能以“个人发起·未认证”形式存在，且必须显示“场地待确认”。"
+                    },
+                    {
+                        "id":  "23",
+                        "name":  "学生发起｜AI工具交流搭子招募",
+                        "raw":  "学生个人发布；拟于9月21日晚开展；欢迎零基础；报名后拉群；具体地点未确定",
+                        "publisher_type":  "学生个人",
+                        "category":  "学生自发活动",
+                        "audience":  null,
+                        "threshold":  "欢迎零基础",
+                        "commitment":  null,
+                        "requirement":  "学生个人发起，未认证；欢迎零基础；报名后拉群；具体地点未确定",
+                        "location":  null,
+                        "location_status":  "待确认",
+                        "online":  false,
+                        "schedule":  "9月21日晚（具体时间未定）",
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站内组队",
+                        "risk_level":  "low",
+                        "risk_reasons":  [
+                                             "个人发起未认证",
+                                             "时间与地点均未确定"
+                                         ],
+                        "flags":  [
+                                      "个人发起未认证",
+                                      "地点未定",
+                                      "时间模糊"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "时间模糊（“晚间”）+ 地点未定，信息完整度极低。建议引导学生补齐后再展示。"
+                    },
+                    {
+                        "id":  "24",
+                        "name":  "学生发起｜“校园兼职福利分享”",
+                        "raw":  "学生个人发布；称“零门槛、日结”，要求添加私人微信获取详情；未提供主办方、地点和完整内容",
+                        "publisher_type":  "学生个人",
+                        "category":  "学生自发活动",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "未提供主办方、地点与完整内容；要求添加私人微信获取详情",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "站外私聊",
+                        "risk_level":  "high",
+                        "risk_reasons":  [
+                                             "要求添加私人微信引流，脱离平台无法追溯",
+                                             "未提供主办方",
+                                             "未提供地点",
+                                             "未提供完整内容",
+                                             "承诺“零门槛、日结”，符合兼职诈骗话术特征"
+                                         ],
+                        "flags":  [
+                                      "高风险",
+                                      "疑似营销/诈骗",
+                                      "信息不完整",
+                                      "站外引流"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "风险反例基线。建议不予收录；若必须展示，需强制警示条并禁止外链私聊。"
+                    },
+                    {
+                        "id":  "25",
+                        "name":  "学生发起｜数码新品体验交流",
+                        "raw":  "学生个人发布；标题为技术交流，正文主要介绍某商家优惠及购买链接；活动时间、地点未注明",
+                        "publisher_type":  "学生个人",
+                        "category":  "学生自发活动",
+                        "audience":  null,
+                        "threshold":  null,
+                        "commitment":  null,
+                        "requirement":  "标题为技术交流，正文主要为商家优惠及购买链接；活动时间、地点未注明",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  null,
+                        "deadline":  null,
+                        "deadline_status":  "未注明",
+                        "quota":  null,
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "外链",
+                        "risk_level":  "medium",
+                        "risk_reasons":  [
+                                             "标题与实际内容不符（标题技术交流，正文为商家推广）",
+                                             "正文含商家优惠与购买链接",
+                                             "未注明活动时间与地点"
+                                         ],
+                        "flags":  [
+                                      "疑似商业推广",
+                                      "标题与内容不符",
+                                      "信息不完整"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "商业推广反例基线。建议标记“疑似商业推广”并降权，或归入商家类目单独管理。"
+                    },
+                    {
+                        "id":  "26",
+                        "name":  "外国语学院校园语言角",
+                        "raw":  "外国语学院发布；9月21日15:00；面向全校学生；自由交流；场地容量有限，无需提前报名",
+                        "publisher_type":  "学院（外国语学院）",
+                        "category":  "兴趣交流",
+                        "audience":  "全校学生",
+                        "threshold":  "自由交流，无门槛",
+                        "commitment":  null,
+                        "requirement":  "面向全校学生，无门槛，自由交流；无需提前报名；场地容量有限，建议提前到场",
+                        "location":  null,
+                        "location_status":  "未注明",
+                        "online":  false,
+                        "schedule":  "9月21日 15:00",
+                        "deadline":  null,
+                        "deadline_status":  "无需报名",
+                        "quota":  "场地容量有限",
+                        "cost":  null,
+                        "outcome":  null,
+                        "signup_mode":  "无需报名",
+                        "risk_level":  "none",
+                        "risk_reasons":  [
+
+                                         ],
+                        "flags":  [
+                                      "无需报名",
+                                      "容量有限",
+                                      "新生友好"
+                                  ],
+                        "parent_id":  null,
+                        "merged":  false,
+                        "children":  [
+
+                                     ],
+                        "notes":  "官方发布但地点未注明，是“地点缺失”问题在官方条目上同样存在的证据。"
+                    }
+                ]
+}
