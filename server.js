@@ -16,6 +16,9 @@ const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const path = require('node:path');
 const crypto = require('node:crypto');
+// 领域逻辑（状态计算、日期解析、合并回填、字段应用）集中在 public/model.js，
+// 由服务版与离线单文件版共用，避免两份实现逐渐不一致。
+const Model = require('./public/model.js');
 
 // ---------------------------------------------------------------- 配置
 
@@ -33,9 +36,10 @@ const HISTORY_FILE = path.join(DATA_DIR, 'history.json');
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '127.0.0.1'; // 只绑回环地址，不对外网暴露
 
-const SCHEMA_VERSION = 1;
-const TERM = '2026 秋季学期';
-const TERM_YEAR = 2026;
+const {
+  SCHEMA_VERSION, TERM, TERM_YEAR, EDITABLE_FIELDS, KEY_LABELS,
+  parseWhen, computeStatus, missingFields, listItem,
+} = Model;
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;      // 单文件 20MB
 const MAX_UPLOAD_REQUEST = 64 * 1024 * 1024; // 单次上传请求上限（内存保护）
@@ -57,14 +61,6 @@ const ALLOWED_TYPES = {
   '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 };
-
-/** 允许通过补充口令修改的字段 */
-const EDITABLE_FIELDS = [
-  'audience', 'threshold', 'commitment', 'requirement',
-  'location', 'location_status',
-  'schedule', 'deadline', 'deadline_status',
-  'quota', 'cost', 'outcome', 'signup_mode',
-];
 
 // ---------------------------------------------------------------- 数据层
 
@@ -93,109 +89,14 @@ function newToken() {
   return crypto.randomBytes(12).toString('hex');
 }
 
-/** 把种子数据的一条记录映射为运行时结构 */
+/** 种子数据 → 运行时结构（实现见 public/model.js） */
 function mapSeedEntry(entry, token) {
-  return {
-    id: entry.id,
-    name: entry.name,
-    editToken: token,
-    fields: {
-      audience: entry.audience ?? null,
-      threshold: entry.threshold ?? null,
-      commitment: entry.commitment ?? null,
-      requirement: entry.requirement ?? null,
-      location: entry.location ?? null,
-      location_status: entry.location_status ?? '未注明',
-      schedule: entry.schedule ?? null,
-      deadline: entry.deadline ?? null,
-      deadline_status: entry.deadline_status ?? '未注明',
-      quota: entry.quota ?? null,
-      cost: entry.cost ?? null,
-      outcome: entry.outcome ?? null,
-      signup_mode: entry.signup_mode ?? '未注明',
-    },
-    raw: entry.raw ?? '',
-    publisherType: entry.publisher_type ?? '未注明',
-    category: entry.category ?? '',
-    riskLevel: entry.risk_level ?? 'none',
-    riskReasons: entry.risk_reasons ?? [],
-    parentId: entry.parent_id ?? null,
-    merged: Boolean(entry.merged),
-    flags: entry.flags ?? [],
-    notes: entry.notes ?? '',
-    updatedAt: null,
-  };
+  return Model.mapSeedEntry(entry, token);
 }
 
-/**
- * 由种子数据建立初始运行时数据。
- * 合并条目（09、20）不单独出卡，其余字段回填父活动并生成初始变更记录。
- */
+/** 由种子数据建立初始运行时数据（含 09/20 的变更记录与地点回填） */
 function buildInitialState(seed) {
-  const activities = seed.entries.map((e) => mapSeedEntry(e, newToken()));
-  const byId = new Map(activities.map((a) => [a.id, a]));
-  const records = [];
-
-  for (const entry of seed.entries) {
-    if (!entry.merged || !entry.parent_id) continue;
-    const parent = byId.get(entry.parent_id);
-    if (!parent) continue;
-
-    // 1) 把补充通知里的变更写成父活动的初始变更记录
-    const coveredLabels = new Set();
-    for (const ch of entry.changes || []) {
-      // 「不变」不是变更，跳过以免留下无意义记录
-      if (!ch.to || ch.to === '不变' || ch.from === ch.to) {
-        if (ch.field) coveredLabels.add(ch.field);
-        continue;
-      }
-      coveredLabels.add(ch.field);
-      records.push({
-        activityId: parent.id,
-        field: ch.field,
-        fieldLabel: ch.field,
-        oldValue: ch.from ?? null,
-        newValue: ch.to ?? null,
-        changedAt: `${TERM_YEAR}-09-19T00:00:00.000Z`,
-        reason: `数据源补充通知 ${entry.id}`,
-        source: 'seed',
-      });
-    }
-
-    // 2) 父活动缺失的地点等字段，用补充通知里的值回填（数据源明确「地点以 09 为准」）
-    //    若补充通知的 changes 已就该字段记过一条，则不再重复记录
-    for (const key of ['location', 'location_status']) {
-      const childVal = entry[key];
-      const parentVal = parent.fields[key];
-      const parentEmpty = parentVal === null || parentVal === undefined || parentVal === '未注明';
-      // 子条目也没有有效值时不回填，避免产生「未注明 -> 未注明」这类空操作记录
-      if (!childVal || childVal === '未注明' || !parentEmpty) continue;
-      const label = KEY_LABELS[key] || key;
-      if (!coveredLabels.has(label)) {
-        records.push({
-          activityId: parent.id,
-          field: key,
-          fieldLabel: label,
-          oldValue: parentVal ?? null,
-          newValue: childVal,
-          changedAt: `${TERM_YEAR}-09-19T00:00:00.000Z`,
-          reason: `数据源补充通知 ${entry.id}`,
-          source: 'seed',
-        });
-      }
-      parent.fields[key] = childVal;
-    }
-  }
-
-  return {
-    state: {
-      schemaVersion: SCHEMA_VERSION,
-      term: TERM,
-      generatedAt: nowIso(),
-      activities,
-    },
-    records,
-  };
+  return Model.buildInitialState(seed, { newToken, now: nowIso });
 }
 
 async function loadState() {
@@ -252,89 +153,6 @@ function publicView(activity) {
 }
 
 // ---------------------------------------------------------------- 状态与日期
-
-const KEY_LABELS = {
-  audience: '面向人群', threshold: '参与门槛', commitment: '投入要求', requirement: '要求',
-  location: '地点', location_status: '地点状态', schedule: '时间',
-  deadline: '报名截止', deadline_status: '截止状态', quota: '名额',
-  cost: '费用', outcome: '收获', signup_mode: '报名方式',
-};
-
-const DATE_RE = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/g;
-const TIME_RE = /(\d{1,2}):(\d{2})/g;
-
-/**
- * 从形如「9月24日 22:00」「9月27日 8:30—17:00」的文本中解析时间点。
- * 规则：取最后一个「M月D日」，配合该日期之后（或全串最后一个）时间；无时间则按当日 23:59。
- * 数据源中的日期没有年份，按学期年份补全（8–12 月为学期年，1–7 月为次年）。
- */
-function parseWhen(text) {
-  if (!text || typeof text !== 'string') return null;
-  const dates = [];
-  let m;
-  DATE_RE.lastIndex = 0;
-  while ((m = DATE_RE.exec(text))) dates.push({ month: +m[1], day: +m[2], index: m.index });
-  if (!dates.length) return null;
-  const last = dates[dates.length - 1];
-
-  const times = [];
-  TIME_RE.lastIndex = 0;
-  while ((m = TIME_RE.exec(text))) times.push({ h: +m[1], mi: +m[2], index: m.index });
-  const after = times.filter((t) => t.index > last.index);
-  const use = after.length ? after[after.length - 1] : (times.length ? times[times.length - 1] : null);
-
-  const year = last.month >= 8 ? TERM_YEAR : TERM_YEAR + 1;
-  const d = new Date(year, last.month - 1, last.day, use ? use.h : 23, use ? use.mi : 59, 0, 0);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-/**
- * 计算时效状态。不落库，每次请求实时计算，避免数据随时间失真。
- * 优先级：已结束 > 报名已截止 > 长期 > 无需报名 > 地点待定 > 报名中
- */
-function computeStatus(activity, now) {
-  const f = activity.fields || {};
-
-  const when = parseWhen(f.schedule);
-  if (when && when < now) return '已结束';
-
-  if (f.deadline_status === '已截止') return '报名已截止';
-  const dl = parseWhen(f.deadline);
-  if (dl && f.deadline_status === '明确' && dl < now) return '报名已截止';
-
-  if (f.deadline_status === '长期') return '长期';
-  if (f.deadline_status === '无需报名') return '无需报名';
-  if (f.location_status === '待确认') return '地点待定';
-  return '报名中';
-}
-
-/** 卡片上必须显式呈现的缺失项（"未注明" ≠ "没有"） */
-function missingFields(activity) {
-  const f = activity.fields || {};
-  const out = [];
-  if (!f.location) out.push('location');
-  if (!f.deadline) out.push('deadline');
-  if (!f.quota) out.push('quota');
-  if (!f.cost) out.push('cost');
-  if (!f.outcome) out.push('outcome');
-  return out;
-}
-
-function listItem(activity, now, history) {
-  const status = computeStatus(activity, now);
-  const hasUpdates = history.some((r) => r.activityId === activity.id);
-  return {
-    id: activity.id,
-    name: activity.name,
-    status,
-    category: activity.category,
-    riskLevel: activity.riskLevel,
-    fields: activity.fields,
-    missing: missingFields(activity),
-    hasUpdates,
-    updatedAt: activity.updatedAt,
-  };
-}
 
 // ---------------------------------------------------------------- 附件
 
@@ -552,33 +370,7 @@ function rateLimited(key) {
 // ---------------------------------------------------------------- API
 
 function applyFields(activity, patch, reason) {
-  const changed = [];
-  const records = [];
-  for (const [key, raw] of Object.entries(patch)) {
-    if (!EDITABLE_FIELDS.includes(key)) continue;
-    let value = raw;
-    if (typeof value === 'string') {
-      value = value.trim();
-      if (value === '') value = null;
-    }
-    if (value !== null && typeof value !== 'string') continue; // 只接受字符串或 null
-
-    const oldValue = activity.fields[key] ?? null;
-    if (oldValue === value) continue;
-    activity.fields[key] = value;
-    changed.push(key);
-    records.push({
-      activityId: activity.id,
-      field: key,
-      fieldLabel: KEY_LABELS[key] || key,
-      oldValue,
-      newValue: value,
-      changedAt: nowIso(),
-      reason: reason || '',
-      source: 'organizer',
-    });
-  }
-  return { changed, records };
+  return Model.applyFields(activity, patch, reason, { now: nowIso });
 }
 
 async function handleApi(req, res, url) {

@@ -7,7 +7,8 @@
 <p align="center">
   <img alt="状态" src="https://img.shields.io/badge/%E7%8A%B6%E6%80%81-%E5%8F%AF%E7%94%A8-brightgreen?style=for-the-badge">
   <img alt="依赖" src="https://img.shields.io/badge/%E4%BE%9D%E8%B5%96-%E9%9B%B6-blue?style=for-the-badge">
-  <img alt="测试" src="https://img.shields.io/badge/%E6%B5%8B%E8%AF%95-81%20%E9%A1%B9%E9%80%9A%E8%BF%87-brightgreen?style=for-the-badge">
+  <img alt="测试" src="https://img.shields.io/badge/%E6%B5%8B%E8%AF%95-94%20%E9%A1%B9%E9%80%9A%E8%BF%87-brightgreen?style=for-the-badge">
+  <img alt="离线版" src="https://img.shields.io/badge/%E7%A6%BB%E7%BA%BF%E7%89%88-%E5%8D%95%E6%96%87%E4%BB%B6-blue?style=for-the-badge">
   <img alt="活动库" src="https://img.shields.io/badge/%E6%B4%BB%E5%8A%A8%E5%BA%93-26%20%E6%9D%A1-blue?style=for-the-badge">
   <img alt="许可证" src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF%E8%AF%81-%E5%BE%85%E5%AE%9A-lightgrey?style=for-the-badge">
 </p>
@@ -18,20 +19,39 @@
 
 产品要解决三件事：让同学能**发现**合适的活动与机会、能**理解**它是否值得参与、让**组织者**能把信息补全。同时处理多来源信息进入平台后带来的真实性、重复、过期与营销噪声问题。
 
+## 两种版本
+
+同一套逻辑（`public/model.js` / `app.js` / `ooxml.js`）支撑两种交付形态，不存在两份实现：
+
+| | **离线单文件版** | **服务版** |
+| --- | --- | --- |
+| 怎么用 | 双击 `校园活动与机会平台.html` | 双击 `start.bat` |
+| 前提 | 只要浏览器 | 需装 Node ≥ 22 |
+| 数据 | 26 条活动内嵌在文件里 | `data/activities.json` |
+| 补充信息的保存 | 点「导出 HTML」下载新文件替换旧的 | 直接落盘，多人共用同一份 |
+| 补充权限 | **无口令**，拿到文件的人都能改 | 每个活动一个专属口令 |
+| 附件 | 只能临时预览本地文件，不保存 | 上传后长期挂在活动下 |
+| 适合 | 自己看、发给同学、离线演示 | 多人各自补充、汇总到同一份数据 |
+
+> 离线单文件版是**由源码生成的产物**（`node tools/build-standalone.js`），不要直接编辑它。
+
 ## 项目状态
 
-**已实现可用。** 单进程 Node 服务 + 原生前端，零 npm 依赖、零构建步骤。
+**已实现可用。** 单进程 Node 服务 + 原生前端 + 离线单文件版，零 npm 依赖、零构建步骤。
 
 - 26 条活动预置展示，每张卡片显示时间、地点、门槛、截止与报名方式，缺失项显式标注"未注明"
-- 组织者凭**专属补充口令**补充或修正信息、上传活动资料，每次修改留痕可追溯
+- 服务版：组织者凭**专属补充口令**补充或修正信息、上传活动资料，每次修改留痕可追溯
+- 离线版：整站内嵌为一个 HTML（约 80KB），双击即用、可单独转发，补充后导出新文件即可
 - 附件在线预览全部在浏览器端完成：图片、PDF（Edge 内置阅读器）、txt（自动识别 UTF-8/GBK）、md、docx、pptx 逐页文字
-- **81 项自动化测试全部通过**（`node --test test/`，使用 Node 内置测试运行器）
+- **94 项自动化测试全部通过**（`node --test test/`，使用 Node 内置测试运行器）
 
 设计文档：[产品设计方案](design/产品设计方案.md)（v4.0 轻量版）· [技术方案](design/技术方案.md)
 
 ## 快速开始
 
-**运行前提**：已安装 Node.js 22 或更高版本（[下载](https://nodejs.org)）。不需要 Docker、不需要 `npm install`、不需要构建。
+**最快的方式**：直接双击根目录的 **`校园活动与机会平台.html`** —— 26 条活动已内嵌在这个文件里，不需要安装任何东西，也不需要联网。这个文件可以直接发给别人（微信、邮件皆可），对方双击就能看。
+
+**服务版**（多人各自补充、汇总到同一份数据）：需要已安装 Node.js 22 或更高版本（[下载](https://nodejs.org)），不需要 Docker、不需要 `npm install`、不需要构建。
 
 双击 **`start.bat`** 即可：它会检查 Node、启动本地服务，并在 2 秒后自动用 Edge 打开 `http://localhost:3000`。关闭窗口即停止服务。
 
@@ -51,14 +71,19 @@ node server.js --reset  # 清空 data/ 并重新由种子数据生成（会丢�
 
 ```text
 .
-├── server.js                      # 唯一的服务端文件（静态服务 + 6 个接口 + 上传与口令校验）
-├── start.bat                      # 双击启动：检查 Node、起服务、打开 Edge
-├── public/                        # 前端（无框架、无构建）
-│   ├── index.html                 #   卡片墙
-│   ├── activity.html              #   活动详情
-│   ├── edit.html                  #   组织者补充页
-│   ├── app.js                     #   共享逻辑：接口、字段渲染、附件预览、Markdown
-│   ├── ooxml.js                   #   docx / pptx 文字提取（自研，零依赖）
+├── 校园活动与机会平台.html          # 离线单文件版【产物，双击即用，勿直接编辑】
+├── server.js                      # 服务版：静态服务 + 6 个接口 + 上传与口令校验
+├── start.bat                      # 双击启动服务版：检查 Node、起服务、打开 Edge
+├── tools/
+│   └── build-standalone.js        #   生成离线单文件版（内联样式/脚本/数据）
+├── public/                        # 前端（无框架、无构建，两种版本共用）
+│   ├── index.html                 #   服务版：卡片墙
+│   ├── activity.html              #   服务版：活动详情
+│   ├── edit.html                  #   服务版：组织者补充页
+│   ├── offline.js                 #   离线版：页面逻辑（哈希路由、导出）
+│   ├── model.js                   #   领域逻辑：状态计算、日期解析、合并回填、字段应用
+│   ├── app.js                     #   共享：字段渲染、附件预览、Markdown、转义
+│   ├── ooxml.js                   #   docx / pptx 文字提取（自研 ZIP 解析，零依赖）
 │   └── style.css
 ├── test/                          # 自动化测试（node:test，零依赖）
 │   ├── data.test.js               #   种子数据完整性
@@ -67,6 +92,7 @@ node server.js --reset  # 清空 data/ 并重新由种子数据生成（会丢�
 │   ├── store.test.js              #   原子写、并发不丢更新、变更记录只追加
 │   ├── decode.test.js             #   中文编码探测与 OOXML 提取
 │   ├── frontend.test.js           #   转义与 Markdown 渲染的 XSS 防护
+│   ├── standalone.test.js         #   离线版：自包含性、防过期、真实执行启动路径
 │   └── helpers.js                 #   临时数据目录、合成 docx/pptx 等测试工具
 ├── data/                          # 运行时数据（首次启动生成，不入库）
 │   ├── activities.json            #   26 条活动 + 补充口令
@@ -98,10 +124,15 @@ node server.js --reset  # 清空 data/ 并重新由种子数据生成（会丢�
 ## 常用命令
 
 ```bash
-node server.js        # 启动服务（默认 http://localhost:3000）
-node server.js --reset # 重新由种子数据初始化
-node --test test/     # 运行全部测试（81 项）
+node tools/build-standalone.js            # 生成/刷新离线单文件版
+node tools/build-standalone.js --check    # 只校验离线版是否为最新
+node server.js                            # 启动服务版（默认 http://localhost:3000）
+node server.js --reset                    # 重新由种子数据初始化（丢弃全部补充与变更记录）
+node --test test/                         # 运行全部测试（94 项）
 ```
+
+> **改了 `public/` 下的脚本或样式后，记得重新生成离线版**，否则产物会过期。
+> `test/standalone.test.js` 会检查这一点并在过期时直接失败，不必依赖记忆。
 
 > **测试必须使用默认的进程隔离模式**（即上面的 `node --test test/`）。`server.js` 是单实例模块，若改用 `--experimental-test-isolation=none` 让多个测试文件共享进程，会直接报错并提示——这不是产品缺陷，而是该模式与单实例模块不兼容。
 
@@ -110,6 +141,7 @@ node --test test/     # 运行全部测试（81 项）
 - 卡片墙：`http://localhost:3000/`
 - 活动详情：`http://localhost:3000/activity.html?id=01`
 - 组织者补充：`http://localhost:3000/edit.html?id=01&token=<口令>`
+- 离线版：直接双击 `校园活动与机会平台.html`
 
 ## 数据说明
 
@@ -132,6 +164,7 @@ node --test test/     # 运行全部测试（81 项）
 - 补充口令 96 bit 随机、用 `timingSafeEqual` 比较；所有接口响应**显式剔除口令字段**（有专项测试断言）
 - 前端统一转义后输出，Markdown 渲染先转义再套规则、不支持内联 HTML、链接只放行 http/https（有 XSS 测试覆盖）
 - 未做病毒扫描（ClamAV 签名库过重，单机使用收益极低）
+- **离线单文件版没有口令保护**：任何拿到该文件的人都能修改其中的信息；它也没有服务端，因此不适合多人协作场景
 
 ## 协作约定
 
@@ -148,7 +181,8 @@ node --test test/     # 运行全部测试（81 项）
 | v2.0 | 改为白名单挂靠式发布以消除虚假信息；基于 26 条数据的实测覆盖率重做设计 |
 | v3.0 | 改为卡片墙展示 + 组织者补充内容 |
 | v4.0 | **大幅减重**：单进程 Node 零依赖、浏览器端附件预览、补充口令替代账号体系；砍掉报名/组队/评价/课表冲突/新生引导/管理后台/完整度评分/地图导航 |
-| 实现 | 按 v4.0 落地：`server.js` + 三页面 + `ooxml.js` + `start.bat` + 81 项测试 |
+| 实现 | 按 v4.0 落地：`server.js` + 三页面 + `ooxml.js` + `start.bat` + 测试 |
+| 离线版 | 领域逻辑抽为 `public/model.js` 供两种版本共用；新增生成式离线单文件版 `校园活动与机会平台.html` |
 
 > 提交历史见 `git log --oneline`。
 
